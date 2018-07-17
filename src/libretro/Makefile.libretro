@@ -317,7 +317,7 @@ endif
 # Final versions of the toolchain flags.
 CFLAGS		:= $(OPTS) $(DFLAGS) $(COPTIM) $(AOPTIM) \
 		   $(AFLAGS) -fomit-frame-pointer -mstackrealign \
-		   -fno-strict-aliasing
+		   -fno-strict-aliasing -fPIC
 CXXFLAGS	:= $(CFLAGS)
 
 

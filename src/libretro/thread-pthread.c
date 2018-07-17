@@ -41,11 +41,11 @@ event_t *thread_create_event()
     return (event_t *)event;
 }
 
-mutex_t *thread_create_mutex()
+mutex_t *thread_create_mutex(wchar_t *name)
 {
 	pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
 
-	pthread_mutex_init(&mutex, NULL);
+	pthread_mutex_init(mutex, NULL);
 
     return (mutex_t *)mutex;
 }
@@ -103,7 +103,7 @@ void thread_close_mutex(mutex_t *handle)
 {
 	pthread_mutex_t *mutex = (pthread_mutex_t*)handle;
 
-	pthread_mutex_destroy(&mutex);
+	pthread_mutex_destroy(mutex);
 
     free(mutex);
 }

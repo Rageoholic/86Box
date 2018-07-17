@@ -21,6 +21,21 @@ static uint32_t *frame_buf;
 static struct retro_log_callback logging;
 static retro_log_printf_t log_cb;
 
+static retro_video_refresh_t video_cb;
+static retro_audio_sample_t audio_cb;
+static retro_audio_sample_batch_t audio_batch_cb;
+static retro_environment_t environ_cb;
+static retro_input_poll_t input_poll_cb;
+static retro_input_state_t input_state_cb;
+
+static uint32_t video_buffer[2048 * 2048];
+
+/* forward declarations */
+void pc_reset_hard_close(void);
+int nvr_save(void);
+void pc_thread(void *param);
+void pc_reset_hard_init(void);
+
 static void fallback_log(enum retro_log_level level, const char *fmt, ...)
 {
    (void)level;
@@ -29,63 +44,6 @@ static void fallback_log(enum retro_log_level level, const char *fmt, ...)
    vfprintf(stderr, fmt, va);
    va_end(va);
 }
-
-void retro_init(void)
-{
-#ifdef _WIN32
-   char slash = '\\';
-#else
-   char slash = '/';
-#endif
-   unsigned i;
-   unsigned color_mode = RETRO_PIXEL_FORMAT_XRGB8888;
-   const char *system_dir = NULL;
-
-   environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &color_mode);
-
-   system_dir = retro_get_system_directory();
-
-   char pcempath[1024];
-
-   sprintf(pcempath, "%s%c%s%c", system_dir, slash, "86box", slash);
-
-   mbstowcs(exe_path, pcempath, sizeof_w(exe_path));
-
-   /* video initialization */
-   video_init();
-   video_setblit(libretro_blit_memtoscreen);
-}
-
-void retro_deinit(void)
-{
-}
-
-unsigned retro_api_version(void)
-{
-   return RETRO_API_VERSION;
-}
-
-void retro_get_system_info(struct retro_system_info *info)
-{
-   memset(info, 0, sizeof(*info));
-   info->library_name     = "86Box";
-   info->library_version  = "v2.00 beta";
-   info->need_fullpath    = false;
-   info->valid_extensions = NULL; // Anything is fine, we don't care.
-}
-
-static retro_video_refresh_t video_cb;
-static retro_audio_sample_t audio_cb;
-static retro_audio_sample_batch_t audio_batch_cb;
-static retro_environment_t environ_cb;
-static retro_input_poll_t input_poll_cb;
-static retro_input_state_t input_state_cb;
-
-/* forward declarations */
-void pc_reset_hard_close(void);
-int nvr_save(void);
-void pc_thread(void *param);
-void pc_reset_hard_init(void);
 
 wchar_t *
 plat_get_extension(wchar_t *s)
@@ -184,6 +142,58 @@ static void libretro_blit_memtoscreen(int x, int y, int y1, int y2, int w, int h
    video_cb(video_buffer, w, h, 2048 * 4);
 }
 
+const char* retro_get_system_directory(void)
+{
+    const char* dir;
+    environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir);
+
+    return dir ? dir : ".";
+}
+
+void retro_init(void)
+{
+#ifdef _WIN32
+   char slash = '\\';
+#else
+   char slash = '/';
+#endif
+   unsigned i;
+   unsigned color_mode = RETRO_PIXEL_FORMAT_XRGB8888;
+   const char *system_dir = NULL;
+
+   environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &color_mode);
+
+   system_dir = retro_get_system_directory();
+
+   char pcempath[1024];
+
+   sprintf(pcempath, "%s%c%s%c", system_dir, slash, "86box", slash);
+
+   mbstowcs(exe_path, pcempath, sizeof_w(exe_path));
+
+   /* video initialization */
+   video_init();
+   video_setblit(libretro_blit_memtoscreen);
+}
+
+void retro_deinit(void)
+{
+}
+
+unsigned retro_api_version(void)
+{
+   return RETRO_API_VERSION;
+}
+
+void retro_get_system_info(struct retro_system_info *info)
+{
+   memset(info, 0, sizeof(*info));
+   info->library_name     = "86Box";
+   info->library_version  = "v2.00 beta";
+   info->need_fullpath    = false;
+   info->valid_extensions = NULL; // Anything is fine, we don't care.
+}
+
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
    float aspect = 4.0f / 3.0f;
@@ -234,14 +244,6 @@ void retro_set_input_state(retro_input_state_t cb)
 void retro_set_video_refresh(retro_video_refresh_t cb)
 {
    video_cb = cb;
-}
-
-const char* retro_get_system_directory(void)
-{
-    const char* dir;
-    environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir);
-
-    return dir ? dir : ".";
 }
 
 void retro_reset(void)

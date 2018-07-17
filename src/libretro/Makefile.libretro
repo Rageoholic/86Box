@@ -161,12 +161,14 @@ VPATH		:= $(CORE_DIR)/src $(CORE_DIR)/src/cpu \
 		   $(CORE_DIR)/src/libretro $(CORE_DIR)/src/win
 
 ifeq ($(X64), y)
-CPP		:= g++ -m64
-CC		:= gcc -m64
+CPP		:= clang++ -m64
+CC		:= clang -m64
 else
-CPP		:= g++ -m32
-CC		:= gcc -m32
+CPP		:= clang++ -m32
+CC		:= clang -m32
 endif
+
+CXX := $(CPP)
 
 # Set up the correct toolchain flags.
 OPTS		:= $(EXTRAS) $(STUFF)
@@ -405,7 +407,6 @@ NETOBJ		:= network.o \
 		    net_3c503.o net_ne2000.o
 
 SNDOBJ		:= sound.o \
-		    openal.o \
 		    snd_opl.o snd_dbopl.o \
 		    dbopl.o nukedopl.o \
 		    snd_resid.o \
@@ -455,7 +456,7 @@ VIDOBJ		:= video.o \
 		    vid_sdac_ramdac.o \
 		    vid_voodoo.o
 
-PLATOBJ		:= libretro.o \
+PLATOBJ		:= libretro.o thread-pthread.o \
 
 OBJ		:= $(MAINOBJ) $(INTELOBJ) $(CPUOBJ) $(MCHOBJ) $(DEVOBJ) \
 		   $(FDDOBJ) $(CDROMOBJ) $(ZIPOBJ) $(HDDOBJ) \
@@ -466,7 +467,7 @@ ifdef EXOBJ
 OBJ		+= $(EXOBJ)
 endif
 
-LIBS		:= -lpng -lz
+LIBS		:= -pthread -lz
 LIBS		+= -static -lstdc++ -lgcc
 ifneq ($(X64), y)
 LIBS		+= -Wl,--large-address-aware

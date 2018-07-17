@@ -13,6 +13,7 @@
 #include "../machine/machine.h"
 #include "../nvr.h"
 #include "../plat.h"
+#include "../plat_midi.h"
 #include "../sound/sound.h"
 #include "../video/video.h"
 
@@ -30,12 +31,10 @@ int rawinputkey[272];
 static retro_video_refresh_t video_cb;
 
 /* forward declarations */
-void closepc(void);
-void savenvr(void);
-int loadbios(void);
-void initpc(int argc, char *argv[]);
-void runpc(void);
-void resetpchard(void);
+void pc_reset_hard_close(void);
+int nvr_save(void);
+void pc_thread(void *param);
+void pc_reset_hard_init(void);
 
 wchar_t *
 plat_get_extension(wchar_t *s)
@@ -48,6 +47,65 @@ void set_window_title(char *s)
 }
 
 void get_executable_name(char *s, int size)
+{
+}
+
+void plat_midi_init(void)
+{
+}
+
+void plat_midi_close(void)
+{
+}
+
+void plat_midi_play_msg(uint8_t* val)
+{
+}
+
+void plat_midi_play_sysex(uint8_t* data, unsigned int len)
+{
+}
+
+int	plat_midi_write(uint8_t val)
+{
+    return 0;
+}
+
+int	plat_midi_get_num_devs()
+{
+    return 0;
+}
+
+void plat_midi_get_dev_name(int num, char *s)
+{
+}
+
+FILE * plat_fopen(wchar_t *path, wchar_t *mode)
+{
+    return fopen(path, mode);
+}
+
+void initalmain(int argc, char *argv[])
+{
+}
+
+void closeal()
+{
+}
+
+void inital()
+{
+}
+
+void check()
+{
+}
+
+void givealbuffer_cd(void *buf)
+{
+}
+
+void givealbuffer(void *buf)
 {
 }
 
@@ -102,7 +160,7 @@ static void timer_rout()
 }
 
 uint64_t timer_freq;
-uint64_t timer_read()
+uint64_t plat_timer_read()
 {
         return 0;
 }
@@ -250,7 +308,7 @@ void retro_set_video_refresh(retro_video_refresh_t cb)
 
 void retro_reset(void)
 {
-   resetpchard();
+   pc_reset_hard_init();
 }
 
 static void check_variables(bool first_time_startup)
@@ -275,13 +333,13 @@ void retro_run(void)
       return;
 
    {
-      runpc();
+      pc_thread(&quited);
       frames++;
       if (frames >= 200 && nvr_dosave)
       {
          frames = 0;
          nvr_dosave = 0;
-         savenvr();
+         nvr_save();
       }
    }
    /* missing: audio_cb / video_cb */
@@ -324,9 +382,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
    check_variables(true);
 
-   initpc(0, NULL);
-
-	resetpchard();
+	pc_reset_hard_init();
 
    (void)info;
    return true;
@@ -334,7 +390,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
 void retro_unload_game(void)
 {
-   closepc();
+   pc_reset_hard_close();
 }
 
 unsigned retro_get_region(void)

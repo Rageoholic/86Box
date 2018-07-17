@@ -68,7 +68,9 @@
 #include "sound/midi.h"
 #include "sound/snd_speaker.h"
 #include "video/video.h"
+#ifndef LIBRETRO
 #include "ui.h"
+#endif
 #include "plat.h"
 #include "plat_midi.h"
 

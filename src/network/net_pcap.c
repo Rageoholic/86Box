@@ -82,10 +82,12 @@ struct bpf_program {
 
 typedef struct pcap_if	pcap_if_t; 
 
+#ifndef LIBRETRO
 typedef struct timeval {
     long		tv_sec;
     long		tv_usec;
 } timeval;
+#endif
 
 #define PCAP_ERRBUF_SIZE	256
 

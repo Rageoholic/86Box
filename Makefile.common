@@ -1,0 +1,32 @@
+INCFLAGS += -I$(CORE_DIR)/src
+
+SOURCES_CXX :=  $(CORE_DIR)/sound/sound_dbopl.cc \
+				$(CORE_DIR)/sound/sound_resid.cc \
+				$(CORE_DIR)/sound/resid-fp/convolve.cc \
+				$(CORE_DIR)/sound/resid-fp/envelope.cc \
+				$(CORE_DIR)/sound/resid-fp/extfilt.cc \
+				$(CORE_DIR)/sound/resid-fp/filter.cc \
+				$(CORE_DIR)/sound/resid-fp/pot.cc \
+				$(CORE_DIR)/sound/resid-fp/sid.cc \
+				$(CORE_DIR)/sound/resid-fp/voice.cc \
+				$(CORE_DIR)/sound/resid-fp/wave6581__ST.cc \
+				$(CORE_DIR)/sound/resid-fp/wave6581_P_T.cc \
+				$(CORE_DIR)/sound/resid-fp/wave6581_PS_.cc \
+				$(CORE_DIR)/sound/resid-fp/wave6581_PST.cc \
+				$(CORE_DIR)/sound/resid-fp/wave8580__ST.cc \
+				$(CORE_DIR)/sound/resid-fp/wave8580_PS_.cc \
+				$(CORE_DIR)/sound/resid-fp/wave8580_PST.cc \
+				$(CORE_DIR)/sound/resid-fp/wave8580_P_T.cc \
+				$(CORE_DIR)/sound/resid-fp/wave.cc \
+                $(CORE_DIR)/sound/dbopl.cpp \
+                $(CORE_DIR)/sound/nukedopl.cpp \
+
+ifeq ($(WITH_DYNAREC), arm)
+	#COMMONFLAGS += -DC_DYNREC -DC_TARGETCPU="ARMV7LE"
+else ifeq ($(WITH_DYNAREC), x86_64)
+	SOURCES_C += $(CORE_DIR)/cpu/codegen_x86-64.c
+	#COMMONFLAGS += -DC_DYNREC -DC_TARGETCPU="X86_64" -DC_HAVE_MPROTECT
+else ifeq ($(WITH_DYNAREC), x86)
+	SOURCES_C += $(CORE_DIR)/cpu/codegen_x86.c
+	#COMMONFLAGS += -DC_DYNREC -DC_TARGETCPU="X86"
+endif

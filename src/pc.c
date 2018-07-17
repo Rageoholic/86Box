@@ -259,7 +259,9 @@ fatal(const char *fmt, ...)
     /* Make sure the message does not have a trailing newline. */
     if ((sp = strchr(temp, '\n')) != NULL) *sp = '\0';
 
+#ifndef LIBRETRO
     ui_msgbox(MBX_ERROR|MBX_FATAL|MBX_ANSI, temp);
+#endif
 
     fflush(stdlog);
 
@@ -589,8 +591,10 @@ pc_init_modules(void)
 again:
     if (! rom_load_bios(romset)) {
 	/* Whoops, ROMs not found. */
+#ifndef LIBRETRO
 	if (romset != -1)
 		ui_msgbox(MBX_INFO, (wchar_t *)IDS_2063);
+#endif
 
 	/*
 	 * Select another machine to use.
@@ -619,9 +623,11 @@ again:
 	gfx_present[c] = video_card_available(video_old_to_new(c));
 again2:
     if (! video_card_available(video_old_to_new(gfxcard))) {
+#ifndef LIBRETRO
 	if (romset != -1) {
 		ui_msgbox(MBX_INFO, (wchar_t *)IDS_2064);
 	}
+#endif
 	for (c=GFX_MAX-1; c>=0; c--) {
 		if (gfx_present[c]) {
 			gfxcard = c;
@@ -811,7 +817,9 @@ pc_reset_hard_init(void)
 	gameport_update_joystick_type();
 
     if (config_changed) {
+#ifndef LIBRETRO
 	ui_sb_update_panes();
+#endif
 
         config_save();
 
@@ -996,7 +1004,9 @@ pc_thread(void *param)
 				 (!mouse_capture) ? plat_get_string(IDS_2077)
 				  : (mouse_get_buttons() > 2) ? plat_get_string(IDS_2078) : plat_get_string(IDS_2079));
 
+#ifndef LIBRETRO
 			ui_window_title(temp);
+#endif
 
 			title_update = 0;
 		}

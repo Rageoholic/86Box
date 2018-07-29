@@ -962,9 +962,17 @@ pc_thread(void *param)
 				exec386_dynarec(clockrate/100);
 			  else
 #endif
+#ifdef USE_REF_386
+                exec386_ref(clockrate/100);
+#else
 				exec386(clockrate/100);
+#endif
 		} else if (machines[machine].cpu[cpu_manufacturer].cpus[cpu_effective].cpu_type >= CPU_286) {
+#ifdef USE_REF_386
+            exec386_ref(clockrate/100);
+#else
 			exec386(clockrate/100);
+#endif
 		} else {
 			execx86(clockrate/100);
 		}

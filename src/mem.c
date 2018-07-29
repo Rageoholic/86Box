@@ -547,7 +547,8 @@ writemembl(uint32_t addr, uint8_t val)
 	return;
     }
 
-    if (page_lookup[addr>>12]) {
+    if (page_lookup[addr>>12])
+ {
 	page_lookup[addr>>12]->write_b(addr, val, page_lookup[addr>>12]);
 
 	return;
@@ -1035,6 +1036,44 @@ mem_readw_phys(uint32_t addr)
     return 0xff;
 }
 
+/*
+ * Version of mem_readw_phys that doesn't go through
+ * the CPU paging mechanism.
+ */
+uint16_t
+mem_readw_phys_dma(uint32_t addr)
+{
+#if 0
+    mem_logical_addr = 0xffffffff;
+#endif
+
+    if (_mem_exec[addr >> 14])
+	return *(uint16_t*)&_mem_exec[addr >> 14][addr & 0x3fff];
+    else if (_mem_read_w[addr >> 14])
+       	return _mem_read_w[addr >> 14](addr, _mem_priv_r[addr >> 14]);
+    else
+	return 0xffff;
+}
+
+/*
+ * Version of mem_readl_phys that doesn't go through
+ * the CPU paging mechanism.
+ */
+uint32_t
+mem_readl_phys_dma(uint32_t addr)
+{
+#if 0
+    mem_logical_addr = 0xffffffff;
+#endif
+
+    if (_mem_exec[addr >> 14])
+	return *(uint32_t*)&_mem_exec[addr >> 14][addr & 0x3fff];
+    else if (_mem_read_l[addr >> 14])
+       	return _mem_read_l[addr >> 14](addr, _mem_priv_r[addr >> 14]);
+    else
+	return 0xffffffff;
+}
+
 
 void
 mem_writeb_phys(uint32_t addr, uint8_t val)
@@ -1073,6 +1112,39 @@ mem_writew_phys(uint32_t addr, uint16_t val)
 	_mem_write_w[addr >> 14](addr, val, _mem_priv_w[addr >> 14]);
 }
 
+/*
+ * Version of mem_readby_phys that doesn't go through
+ * the CPU paging mechanism.
+ */
+void
+mem_writew_phys_dma(uint32_t addr, uint16_t val)
+{
+#if 0
+    mem_logical_addr = 0xffffffff;
+#endif
+
+    if (_mem_exec[addr >> 14])
+	*(uint16_t*)&_mem_exec[addr >> 14][addr & 0x3fff] = val;
+    else if (_mem_write_w[addr >> 14])
+       	_mem_write_w[addr >> 14](addr, val, _mem_priv_w[addr >> 14]);
+}
+
+/*
+ * Version of mem_readby_phys that doesn't go through
+ * the CPU paging mechanism.
+ */
+void
+mem_writel_phys_dma(uint32_t addr, uint32_t val)
+{
+#if 0
+    mem_logical_addr = 0xffffffff;
+#endif
+
+    if (_mem_exec[addr >> 14])
+	*(uint32_t*)&_mem_exec[addr >> 14][addr & 0x3fff] = val;
+    else if (_mem_write_l[addr >> 14])
+       	_mem_write_l[addr >> 14](addr, val, _mem_priv_w[addr >> 14]);
+}
 
 uint8_t
 mem_read_ram(uint32_t addr, void *priv)
@@ -1097,6 +1169,12 @@ mem_read_raml(uint32_t addr, void *priv)
 {
     addreadlookup(mem_logical_addr, addr);
 
+    return *(uint32_t *)&ram[addr];
+}
+
+uint32_t
+mem_read_raml_dma(uint32_t addr)
+{
     return *(uint32_t *)&ram[addr];
 }
 
@@ -1673,7 +1751,8 @@ mem_log("MEM: reset: new pages=%08lx, pages_sz=%i\n", pages, pages_sz);
     memset(page_lookup, 0x00, (1 << 20) * sizeof(page_t *));
 #endif
 
-    memset(pages, 0x00, pages_sz*sizeof(page_t));
+    memset(pages, 0x00, pages_sz*sizeof(page_t));
+
 
     for (c=0; c<pages_sz; c++) {
 	pages[c].mem = &ram[c << 12];

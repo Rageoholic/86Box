@@ -668,6 +668,14 @@ void resetx86()
 #endif
         x86_was_reset = 1;
 	port_92_clear_reset();
+
+        //TODO: Segment flags reset values taken from MAME. Verify!
+        _cs.flags_ref = 0x0093;
+        _ds.flags_ref = 0x0093;
+        _es.flags_ref = 0x0093;
+        _fs.flags_ref = 0x0093;
+        _gs.flags_ref = 0x0093;
+        _ss.flags_ref = 0x0093;
 }
 
 void softresetx86()
@@ -704,6 +712,14 @@ void softresetx86()
         x86seg_reset();
         x86_was_reset = 1;
 	port_92_clear_reset();
+
+        //TODO: Segment flags reset values taken from MAME. Verify!
+        _cs.flags_ref = 0x0093;
+        _ds.flags_ref = 0x0093;
+        _es.flags_ref = 0x0093;
+        _fs.flags_ref = 0x0093;
+        _gs.flags_ref = 0x0093;
+        _ss.flags_ref = 0x0093;
 }
 
 static void setznp8(uint8_t val)

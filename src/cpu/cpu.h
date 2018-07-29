@@ -166,6 +166,8 @@ typedef struct {
     uint32_t	limit_low,
 		limit_high;
     int		checked; /*Non-zero if selector is known to be valid*/
+
+    uint16_t flags_ref;
 } x86seg;
 
 typedef union {
@@ -445,6 +447,9 @@ extern int	divl(uint32_t val);
 extern void	dumpregs(int __force);
 extern void	execx86(int cycs);
 extern void	exec386(int cycs);
+#ifdef USE_REF_386
+extern void exec386_ref(int cycs);
+#endif
 extern void	exec386_dynarec(int cycs);
 extern int	idivl(int32_t val);
 extern void	loadcscall(uint16_t seg);

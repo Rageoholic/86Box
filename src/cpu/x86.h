@@ -5,16 +5,15 @@ int oldcpl;
 extern int nmi_enable;
 
 int tempc;
-int output;
-int firstrepcycle;
+extern int output;
+extern int firstrepcycle;
 
 uint32_t easeg,ealimit,ealimitw;
 
-int skipnextprint;
-int inhlt;
+extern int skipnextprint;
 
 uint8_t opcode;
-int noint;
+extern int noint;
 
 uint16_t lastcs,lastpc;
 extern int timetolive,keyboardtimer;

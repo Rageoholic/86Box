@@ -352,7 +352,7 @@ ifeq ($(REF_386), y)
 OPTS		+= -DUSE_REF_386
 DEVBROBJ    += 386_ref.o
 else
-CPUOBJ      += 386.o
+DEVBROBJ    += 386.o
 endif
 
 ifeq ($(AMD_K), y)

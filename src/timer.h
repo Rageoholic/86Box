@@ -1,6 +1,9 @@
 #ifndef _TIMER_H_
 #define _TIMER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int64_t timer_start;
 
@@ -53,5 +56,9 @@ extern int64_t timer_one;
 #define TIMER_SHIFT 6
 
 extern int64_t TIMER_USEC;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /*_TIMER_H_*/

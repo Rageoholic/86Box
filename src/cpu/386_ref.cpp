@@ -1,5 +1,3 @@
-extern "C"
-{
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -420,14 +418,14 @@ exec386_ref(int cycs)
 		cpu_state.ssegs = 0;
 
 		try {
-    			uint32_t fetchdat = readmeml_ref(&_cs, cpu_state.pc);
+    			uint32_t rmdat32 = readmeml_ref(&_cs, cpu_state.pc);
 
 	    		trap = flags & T_FLAG;
-    			opcode = fetchdat & 0xFF;
-    			fetchdat >>= 8;
+    			opcode = rmdat32 & 0xFF;
+    			rmdat32 >>= 8;
 
     			cpu_state.pc++;
-    			x86_opcodes[(opcode | cpu_state.op32) & 0x3ff](fetchdat);
+    			x86_opcodes[(opcode | cpu_state.op32) & 0x3ff](rmdat32);
     			if (x86_was_reset)
     				break;
     			if(x86_was_reset) break;
@@ -442,5 +440,4 @@ exec386_ref(int cycs)
 
 	timer_end_period(cycles << TIMER_SHIFT);
     }
-}
 }

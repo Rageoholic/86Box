@@ -448,7 +448,14 @@ extern void	dumpregs(int __force);
 extern void	execx86(int cycs);
 extern void	exec386(int cycs);
 #ifdef USE_REF_386
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 extern void exec386_ref(int cycs);
+#ifdef __cplusplus
+}
+#endif
 #endif
 extern void	exec386_dynarec(int cycs);
 extern int	idivl(int32_t val);

@@ -37,6 +37,9 @@
 #ifndef EMU_MEM_H
 # define EMU_MEM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define MEM_MAPPING_EXTERNAL	1	/* on external bus (ISA/PCI) */
 #define MEM_MAPPING_INTERNAL	2	/* on internal bus (RAM) */
@@ -289,5 +292,9 @@ static __inline uint32_t get_phys_noabrt(uint32_t addr)
 }
 #endif
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/*EMU_MEM_H*/

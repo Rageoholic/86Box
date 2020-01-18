@@ -53,6 +53,7 @@
 #include "vid_oak_oti.h"
 #include "vid_paradise.h"
 #include "vid_pgc.h"
+#include "vid_riva128.h"
 #include "vid_s3.h"
 #include "vid_s3_virge.h"
 #include "vid_sigma.h"
@@ -153,6 +154,9 @@ video_cards[] = {
     { "[PCI] Matrox Mystique",				"mystique",		&mystique_device			},
     { "[PCI] Matrox Mystique 220",			"mystique_220",		&mystique_220_device			},
     { "[PCI] Number Nine 9FX (S3 Trio64)",		"n9_9fx_pci",		&s3_9fx_pci_device			},
+#if defined(DEV_BRANCH) && defined(USE_RIVA128)
+    { "[PCI] nVIDIA RIVA 128",		"riva128_pci",		&riva128_pci_device			},
+#endif
     { "[PCI] Paradise Bahamas 64 (S3 Vision864)",	"bahamas64_pci",	&s3_bahamas64_pci_device		},
     { "[PCI] Phoenix S3 Vision864",			"px_vision864_pci",	&s3_phoenix_vision864_pci_device	},
     { "[PCI] Phoenix S3 Trio32",			"px_trio32_pci",	&s3_phoenix_trio32_pci_device		},
